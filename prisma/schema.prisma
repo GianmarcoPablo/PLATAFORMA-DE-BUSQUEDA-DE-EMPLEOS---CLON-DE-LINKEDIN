@@ -1,0 +1,117 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  admin
+  user
+}
+
+model User {
+  id           String         @id @default(uuid())
+  email        String         @unique
+  password     String
+  firstName    String
+  lastName     String
+  roles        String[]       @default(["user"])
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  profile      Profile? // relacion de uno a uno
+  company      Company[] // relacion de uno a muchos
+  Application  Application[]
+  FavoriteJobs FavoriteJobs[]
+}
+
+model Profile {
+  id         String   @id @default(uuid())
+  about      String?
+  photo      String?
+  phone      String?
+  experience String?
+  education  String?
+  location   String?
+  skills     String[]
+  languages  String[]
+  links      String[]
+  user       User     @relation(fields: [userId], references: [id])
+  userId     String   @unique
+}
+
+model Company {
+  id          String   @id @default(uuid())
+  name        String
+  description String
+  logo        String
+  location    String
+  links       String[]
+
+  user     User    @relation(fields: [userId], references: [id])
+  userId   String
+  jobs     Job[] // relacion de uno a muchos
+  sector   Sector? @relation(fields: [sectorId], references: [id])
+  sectorId Int?
+}
+
+model Job {
+  id           String         @id @default(uuid())
+  title        String
+  description  String
+  location     String
+  salary       Float
+  typeJob      String
+  workModality String
+  skills       String[]
+  benefits     String[]
+  requirements String[]
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  company      Company        @relation(fields: [companyId], references: [id])
+  companyId    String
+  Category     Category?      @relation(fields: [categoryId], references: [id])
+  categoryId   Int?
+  Application  Application[]
+  FavoriteJobs FavoriteJobs[]
+}
+
+model Sector {
+  id        Int       @id @default(autoincrement())
+  name      String
+  companies Company[] // relacion de uno a muchos
+}
+
+model Category {
+  id   Int    @id @default(autoincrement())
+  name String
+  jobs Job[] // relacion de uno a muchos
+}
+
+model Application {
+  id        String   @id @default(uuid())
+  message   String
+  status    String
+  job       Job      @relation(fields: [jobId], references: [id])
+  jobId     String
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  createdAt DateTime @default(now())
+}
+
+model FavoriteJobs {
+  id        String   @id @default(uuid())
+  job       Job      @relation(fields: [jobId], references: [id])
+  jobId     String
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  createdAt DateTime @default(now())
+}
