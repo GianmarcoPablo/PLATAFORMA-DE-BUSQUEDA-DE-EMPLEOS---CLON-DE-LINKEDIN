@@ -28,7 +28,7 @@ export class UserRoleGuard implements CanActivate {
             throw new BadRequestException("No se ha encontrado el usuario en la petición");
         }
 
-        for (const role of user.role) {
+        for (const role of user.roles) {
             if (validRoles.includes(role)) {
                 return true
             }

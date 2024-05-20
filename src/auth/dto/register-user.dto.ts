@@ -1,4 +1,4 @@
-import { IsBoolean, IsDate, IsEmail, IsNotEmpty, IsOptional, IsString, MaxLength, MinLength } from 'class-validator';
+import { IsArray, IsBoolean, IsDate, IsEmail, IsNotEmpty, IsOptional, IsString, MaxLength, MinLength } from 'class-validator';
 
 
 
@@ -22,7 +22,7 @@ export class RegisterUserDto {
     password: string;
 
     @IsOptional()
-    @IsString()
+    @IsArray()
     roles: string[];
 
 }
